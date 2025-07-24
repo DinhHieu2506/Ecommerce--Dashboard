@@ -27,21 +27,43 @@ export default function ProductsPage() {
       dispatch(clearError());
     }
   }, [error, dispatch]);
+  const handleSave = async (data) => {
+    try {
+      if (editingProduct) {
+        await dispatch(
+          updateProduct({ ...data, id: editingProduct.id })
+        ).unwrap();
+        notification.success({ message: "Product updated successfully" });
+        setOpen(false);
+        setEditingProduct(null);
+      } else {
+        await dispatch(addProduct(data)).unwrap();
+        notification.success({ message: "Product added successfully" });
+        setOpen(false);
+      }
+    } catch (error) {
+      notification.error({
+        message: "Failed to save product",
+        description:
+          error === "Product not found"
+            ? "This product no longer exists. It may have been deleted by another user."
+            : error === "Product already exists"
+            ? "A product with this name already exists. Please choose a different name."
+            : error?.message || "Something went wrong.",
+      });
 
-  const handleSave = (data) => {
-    if (editingProduct) {
-      dispatch(updateProduct({ ...data, id: editingProduct.id }));
-    } else {
-      dispatch(addProduct(data));
+      if (editingProduct && error === "Product not found") {
+        setOpen(false);
+        setEditingProduct(null);
+        dispatch(fetchProducts());
+      }
     }
-    setOpen(false);
-    setEditingProduct(null);
   };
 
   const handleDelete = (id) => {
     Modal.confirm({
       title: "Confirm delete",
-      content: "Are you sure you want to delete this user?",
+      content: "Are you sure you want to delete this product?",
       okText: "Yes",
       cancelText: "No",
       onOk: async () => {
@@ -49,14 +71,19 @@ export default function ProductsPage() {
           await dispatch(deleteProduct(id)).unwrap();
           notification.success({
             message: "Deleted",
-            description: "User deleted successfully.",
-            duration: 2,
+            description: "Product deleted successfully.",
           });
         } catch (error) {
           notification.error({
             message: "Delete failed",
-            description: "There was an error while deleting the user.",
+            description:
+              error === "Product not found"
+                ? "This product no longer exists. It may have already been deleted."
+                : error?.message || "Something went wrong.",
           });
+          if (error === "Product not found") {
+            dispatch(fetchProducts());
+          }
         }
       },
     });

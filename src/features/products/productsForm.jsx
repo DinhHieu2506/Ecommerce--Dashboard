@@ -14,17 +14,15 @@ export default function ProductForm({ visible, onClose, onSave, initialData }) {
   });
 
   useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    } else {
-      setFormData({
+    setFormData(
+      initialData || {
         name: "",
         category: "",
         price: 0,
         description: "",
         stock: 0,
-      });
-    }
+      }
+    );
   }, [initialData, visible]);
 
   const handleChange = (key, value) => {
@@ -40,23 +38,16 @@ export default function ProductForm({ visible, onClose, onSave, initialData }) {
     };
 
     if (!trimmedData.name) {
-      notification.error({ message: "Name is required" });
-      return;
+      return notification.error({ message: "Name is required" });
     }
     if (formData.price <= 0) {
-      notification.error({ message: "Price must be greater than 0" });
-      return;
+      return notification.error({ message: "Price must be greater than 0" });
+    }
+    if (formData.stock < 0) {
+      return notification.error({ message: "Stock cannot be negative" });
     }
 
-    if (formData.stock <= 0) {
-      notification.error({ message: "Stock cannot be negative" });
-      return;
-    }
-    onSave && onSave(trimmedData);
-    notification.success({
-      message: initialData ? "Product updated" : "Product added",
-    });
-    onClose();
+    onSave(trimmedData);
   };
 
   return (
