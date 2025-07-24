@@ -2,11 +2,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const baseUrl = `${API_BASE_URL}/orders`;
-const productsUrl = `${API_BASE_URL}/products`;
+const ORDERS_URL = `${API_BASE_URL}/orders`;
+const PRODUCTS_URL = `${API_BASE_URL}/products`;
 
 const calculateTotalPrice = async (productIds) => {
-  const res = await axios.get(productsUrl);
+  const res = await axios.get(PRODUCTS_URL);
   const allProducts = res.data;
   return productIds.reduce((total, id) => {
     const product = allProducts.find((p) => p.id === id);
@@ -16,8 +16,8 @@ const calculateTotalPrice = async (productIds) => {
 
 export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
   const [ordersRes, productsRes] = await Promise.all([
-    axios.get(baseUrl),
-    axios.get(productsUrl),
+    axios.get(ORDERS_URL),
+    axios.get(PRODUCTS_URL),
   ]);
 
   const orders = ordersRes.data;
@@ -37,7 +37,7 @@ export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
 export const updateOrderStatus = createAsyncThunk(
   "orders/updateOrderStatus",
   async ({ id, status }) => {
-    const res = await axios.patch(`${baseUrl}/${id}`, { status });
+    const res = await axios.patch(`${ORDERS_URL}/${id}`, { status });
     return res.data;
   }
 );
@@ -49,7 +49,7 @@ export const addOrder = createAsyncThunk("orders/addOrder", async (order) => {
     totalPrice,
     createdAt: new Date().toISOString(),
   };
-  const res = await axios.post(baseUrl, fullOrder);
+  const res = await axios.post(ORDERS_URL, fullOrder);
   return res.data;
 });
 
@@ -58,7 +58,7 @@ export const updateOrder = createAsyncThunk(
   async (order) => {
     const totalPrice = await calculateTotalPrice(order.productIds);
     const fullOrder = { ...order, totalPrice };
-    const res = await axios.put(`${baseUrl}/${order.id}`, fullOrder);
+    const res = await axios.put(`${ORDERS_URL}/${order.id}`, fullOrder);
     return res.data;
   }
 );
