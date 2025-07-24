@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const baseUrl = "http://localhost:3000/orders";
-const productsUrl = "http://localhost:3000/products";
-
+// Sử dụng biến môi trường
+const baseApiUrl = import.meta.env.VITE_API_BASE_URL;
+const ordersUrl = `${baseApiUrl}/orders`;
+const productsUrl = `${baseApiUrl}/products`;
 
 const calculateTotalPrice = async (productIds) => {
   const res = await axios.get(productsUrl);
@@ -14,18 +15,15 @@ const calculateTotalPrice = async (productIds) => {
   }, 0);
 };
 
-
 export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
-  
   const [ordersRes, productsRes] = await Promise.all([
-    axios.get(baseUrl),
+    axios.get(ordersUrl),
     axios.get(productsUrl),
   ]);
 
   const orders = ordersRes.data;
   const products = productsRes.data;
 
-  
   const enrichedOrders = orders.map(order => {
     const totalPrice = order.productIds.reduce((sum, id) => {
       const product = products.find(p => p.id === id);
@@ -37,29 +35,25 @@ export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
   return enrichedOrders;
 });
 
-
-
 export const updateOrderStatus = createAsyncThunk(
   "orders/updateOrderStatus",
   async ({ id, status }) => {
-    const res = await axios.patch(`${baseUrl}/${id}`, { status });
+    const res = await axios.patch(`${ordersUrl}/${id}`, { status });
     return res.data;
   }
 );
 
-
 export const addOrder = createAsyncThunk("orders/addOrder", async (order) => {
   const totalPrice = await calculateTotalPrice(order.productIds);
   const fullOrder = { ...order, totalPrice, createdAt: new Date().toISOString() };
-  const res = await axios.post(baseUrl, fullOrder);
+  const res = await axios.post(ordersUrl, fullOrder);
   return res.data;
 });
-
 
 export const updateOrder = createAsyncThunk("orders/updateOrder", async (order) => {
   const totalPrice = await calculateTotalPrice(order.productIds);
   const fullOrder = { ...order, totalPrice };
-  const res = await axios.put(`${baseUrl}/${order.id}`, fullOrder);
+  const res = await axios.put(`${ordersUrl}/${order.id}`, fullOrder);
   return res.data;
 });
 

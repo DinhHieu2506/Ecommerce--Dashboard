@@ -1,7 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const PRODUCTS_URL = "http://localhost:3000/products";
+// Lấy base URL từ biến môi trường
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const PRODUCTS_URL = `${BASE_URL}/products`;
+const ORDERS_URL = `${BASE_URL}/orders`;
 
 // Async Thunks
 export const fetchProducts = createAsyncThunk("products/fetchProducts", async () => {
@@ -19,12 +22,12 @@ export const updateProduct = createAsyncThunk("products/updateProduct", async (p
   return res.data;
 });
 
-export const deleteProduct = createAsyncThunk("products/deleteProduct", async (id, thunkAPI) => {
+export const deleteProduct = createAsyncThunk("products/deleteProduct", async (id) => {
   // Xoá product
   await axios.delete(`${PRODUCTS_URL}/${id}`);
 
   // Lấy tất cả orders
-  const ordersRes = await axios.get("http://localhost:3000/orders");
+  const ordersRes = await axios.get(ORDERS_URL);
   const orders = ordersRes.data;
 
   // Lọc ra các orders chứa productId vừa xóa
@@ -35,10 +38,10 @@ export const deleteProduct = createAsyncThunk("products/deleteProduct", async (i
 
     if (updatedProductIds.length === 0) {
       // Xoá đơn hàng nếu không còn sản phẩm nào
-      await axios.delete(`http://localhost:3000/orders/${order.id}`);
+      await axios.delete(`${ORDERS_URL}/${order.id}`);
     } else {
       // Cập nhật lại đơn hàng với danh sách sản phẩm mới
-      await axios.put(`http://localhost:3000/orders/${order.id}`, {
+      await axios.put(`${ORDERS_URL}/${order.id}`, {
         ...order,
         productIds: updatedProductIds
       });
@@ -47,7 +50,6 @@ export const deleteProduct = createAsyncThunk("products/deleteProduct", async (i
 
   return id; // Trả lại id để cập nhật trong store
 });
-
 
 // Slice
 const productsSlice = createSlice({
@@ -58,7 +60,6 @@ const productsSlice = createSlice({
     error: null,
   },
   reducers: {
-    // ✅ Action để reset lỗi
     clearError: (state) => {
       state.error = null;
     },
@@ -108,6 +109,5 @@ const productsSlice = createSlice({
   },
 });
 
-// ✅ Export action và reducer
 export const { clearError } = productsSlice.actions;
 export default productsSlice.reducer;
