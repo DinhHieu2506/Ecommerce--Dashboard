@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Sử dụng biến môi trường
-const baseApiUrl = import.meta.env.VITE_API_BASE_URL;
-const ordersUrl = `${baseApiUrl}/orders`;
-const productsUrl = `${baseApiUrl}/products`;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const baseUrl = `${API_BASE_URL}/orders`;
+const productsUrl = `${API_BASE_URL}/products`;
+
 
 const calculateTotalPrice = async (productIds) => {
   const res = await axios.get(productsUrl);
@@ -16,8 +16,9 @@ const calculateTotalPrice = async (productIds) => {
 };
 
 export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
+  
   const [ordersRes, productsRes] = await Promise.all([
-    axios.get(ordersUrl),
+    axios.get(baseUrl),
     axios.get(productsUrl),
   ]);
 
@@ -35,10 +36,11 @@ export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
   return enrichedOrders;
 });
 
+
 export const updateOrderStatus = createAsyncThunk(
   "orders/updateOrderStatus",
   async ({ id, status }) => {
-    const res = await axios.patch(`${ordersUrl}/${id}`, { status });
+    const res = await axios.patch(`${baseUrl}/${id}`, { status });
     return res.data;
   }
 );
@@ -46,14 +48,14 @@ export const updateOrderStatus = createAsyncThunk(
 export const addOrder = createAsyncThunk("orders/addOrder", async (order) => {
   const totalPrice = await calculateTotalPrice(order.productIds);
   const fullOrder = { ...order, totalPrice, createdAt: new Date().toISOString() };
-  const res = await axios.post(ordersUrl, fullOrder);
+  const res = await axios.post(baseUrl, fullOrder);
   return res.data;
 });
 
 export const updateOrder = createAsyncThunk("orders/updateOrder", async (order) => {
   const totalPrice = await calculateTotalPrice(order.productIds);
   const fullOrder = { ...order, totalPrice };
-  const res = await axios.put(`${ordersUrl}/${order.id}`, fullOrder);
+  const res = await axios.put(`${baseUrl}/${order.id}`, fullOrder);
   return res.data;
 });
 

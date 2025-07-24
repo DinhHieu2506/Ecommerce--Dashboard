@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Eye, Clock, Loader, Truck, CheckCircle, Ban } from "lucide-react";
-import { fetchOrders, selectOrder, updateOrderStatus } from "./ordersSlice";
+import { Eye } from "lucide-react";
+import { fetchOrders, selectOrder } from "./ordersSlice";
 import OrderForm from "./ordersForm";
 import { fetchUsers } from "../users/usersSlice";
+import OrderStatusPopover from "./ordersStatus"; 
 
 export default function OrdersPage() {
   const dispatch = useDispatch();
   const { list: orders, loading } = useSelector((state) => state.orders);
+  const users = useSelector((state) => state.users.list);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     dispatch(fetchOrders());
-  }, [dispatch]);
-
-  useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
 
@@ -23,52 +22,9 @@ export default function OrdersPage() {
     setVisible(true);
   };
 
-  const users = useSelector((state) => state.users.list);
-
   const getUserNameById = (id) => {
     const user = users.find((u) => u.id === id);
     return user ? user.name : "Unknown";
-  };
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "pending":
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded-full">
-            <Clock size={14} /> Pending
-          </span>
-        );
-      case "processing":
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full">
-            <Loader size={14} className="animate-spin" /> Processing
-          </span>
-        );
-      case "shipped":
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded-full">
-            <Truck size={14} /> Shipped
-          </span>
-        );
-      case "delivered":
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
-            <CheckCircle size={14} /> Delivered
-          </span>
-        );
-      case "cancelled":
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded-full">
-            <Ban size={14} /> Cancelled
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-full">
-            <Clock size={14} /> Unknown
-          </span>
-        );
-    }
   };
 
   return (
@@ -120,8 +76,9 @@ export default function OrdersPage() {
                   <td className="py-4 px-4 sm:px-6 text-xs sm:text-sm text-gray-600 break-words">
                     {getUserNameById(order.userId)}
                   </td>
-                  <td className="py-4 px-4 sm:px-6 text-xs sm:text-sm text-gray-900 capitalize">
-                    {getStatusBadge(order.status)}
+                  <td className="py-4 px-4 sm:px-6 text-xs sm:text-sm">
+                    <OrderStatusPopover order={order} />{" "}
+                    {/* 👈 Thay thế badge bằng popover */}
                   </td>
                   <td className="py-4 px-4 sm:px-6 text-xs sm:text-sm text-gray-600">
                     ${order.totalPrice}

@@ -14,7 +14,6 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
 export const updateUser = createAsyncThunk('users/updateUser', async (user) => {
   const updatedUser = {
     ...user,
-    createdAt: new Date().toISOString(),
   };
   const res = await axios.put(`${API_URL}/${user.id}`, updatedUser);
   return res.data;

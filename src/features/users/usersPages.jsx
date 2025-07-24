@@ -64,13 +64,14 @@ export default function UsersPage() {
     }
   };
 
-  const filteredUsers = list.filter((user) => {
-    const matchSearch =
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchRole = roleFilter ? user.role === roleFilter : true;
-    return matchSearch && matchRole;
-  });
+ const filteredUsers = list.filter((user) => {
+  const trimmedSearch = searchTerm.trim().toLowerCase();
+  const matchSearch =
+    user.name.toLowerCase().includes(trimmedSearch) ||
+    user.email.toLowerCase().includes(trimmedSearch);
+  const matchRole = roleFilter ? user.role === roleFilter : true;
+  return matchSearch && matchRole;
+});
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-4">
