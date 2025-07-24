@@ -1,0 +1,56 @@
+{
+  "products": [
+    {
+      "id": "342d",
+      "name": "Dark Nhân Tâm",
+      "category": "Books",
+      "price": 50,
+      "description": "Hay quá",
+      "stock": 10
+    },
+    {
+      "id": "af53",
+      "name": "Quả bóng",
+      "category": "Sports",
+      "price": 20,
+      "description": "Haha",
+      "stock": 12
+    },
+    {
+      "id": "a072",
+      "name": "aaaaaa",
+      "category": "Clothing",
+      "price": 1,
+      "description": "",
+      "stock": 2
+    }
+  ],
+  "users": [
+    {
+      "id": "2",
+      "name": "Nguyễn Van A",
+      "email": "vanaaa@example.com",
+      "role": "customer",
+      "createdAt": "2025-07-22T03:11:49.536Z"
+    },
+    {
+      "id": "3",
+      "name": "Trần Đình Hiếu",
+      "email": "hieumap2506@gmail.com",
+      "role": "admin",
+      "createdAt": "2025-07-21T03:07:10.648Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "2",
+      "userId": "3",
+      "productIds": [
+        "342d"
+      ],
+      "status": "shipped",
+      "totalPrice": 0,
+      "createdAt": "2025-07-18T09:30:00.000Z"
+    }
+  ]
+}
