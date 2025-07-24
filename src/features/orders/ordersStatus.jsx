@@ -42,31 +42,40 @@ export default function OrderStatusPopover({ order }) {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
+  const isLocked = ["delivered", "cancelled"].includes(order.status);
+  const current = statusOptions[order.status];
+
   const handleChange = (status) => {
-    if (status !== order.status) {
-      dispatch(updateOrderStatus({ id: order.id, status }));
+    if (isLocked || status === order.status) {
+      setOpen(false);
+      return;
     }
+
+    dispatch(updateOrderStatus({ id: order.id, status }));
     setOpen(false);
   };
 
   const content = (
     <div className="w-48">
-      {Object.entries(statusOptions).map(([key, { label, icon }]) => (
-        <div
-          key={key}
-          onClick={() => handleChange(key)}
-          className={`flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer rounded ${
-            key === order.status ? "bg-gray-100" : ""
-          }`}
-        >
-          {icon}
-          <span>{label}</span>
-        </div>
-      ))}
+      {Object.entries(statusOptions).map(([key, { label, icon }]) => {
+        const isCurrent = key === order.status;
+        return (
+          <div
+            key={key}
+            onClick={!isLocked ? () => handleChange(key) : undefined}
+            className={`flex items-center gap-2 px-3 py-2 rounded 
+              ${isCurrent ? "bg-gray-100" : "hover:bg-gray-100"} 
+              ${
+                isLocked ? "cursor-not-allowed text-gray-400" : "cursor-pointer"
+              }`}
+          >
+            {icon}
+            <span>{label}</span>
+          </div>
+        );
+      })}
     </div>
   );
-
-  const current = statusOptions[order.status];
 
   return (
     <Popover

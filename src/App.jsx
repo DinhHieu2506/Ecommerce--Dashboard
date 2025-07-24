@@ -4,7 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import NavBar from "./components/navBar";
+import NavBar from "./component/navBar";
 import ProductsPage from "./features/products/productsPage";
 import UsersPage from "./features/users/usersPages";
 import OrdersPage from "./features/orders/ordersPages"; // Sửa lỗi chính tả
@@ -15,7 +15,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-100">
         <NavBar />
-        <div className="px-4 py-4 sm:px-6 lg:px-8">
+        
           <Routes>
             <Route path="/" element={<Navigate to="/products" replace />} />
             <Route path="/products" element={<ProductsPage />} />
@@ -31,7 +31,7 @@ function App() {
             />
           </Routes>
         </div>
-      </div>
+  
     </Router>
   );
 }

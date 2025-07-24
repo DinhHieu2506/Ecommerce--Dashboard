@@ -23,13 +23,33 @@ export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
   const orders = ordersRes.data;
   const products = productsRes.data;
 
-  const enrichedOrders = orders.map((order) => {
-    const totalPrice = order.productIds.reduce((sum, id) => {
-      const product = products.find((p) => p.id === id);
-      return product ? sum + product.price : sum;
-    }, 0);
-    return { ...order, totalPrice };
-  });
+  const enrichedOrders = await Promise.all(
+    orders.map(async (order) => {
+      // Lọc những productId còn tồn tại
+      const validProductIds = order.productIds.filter((id) =>
+        products.some((p) => p.id === id)
+      );
+
+      // Tính lại tổng giá đơn hàng
+      const totalPrice = validProductIds.reduce((sum, id) => {
+        const product = products.find((p) => p.id === id);
+        return product ? sum + product.price : sum;
+      }, 0);
+
+      // Nếu có thay đổi productIds -> cập nhật lại order trên server
+      if (validProductIds.length !== order.productIds.length) {
+        await axios.patch(`${ORDERS_URL}/${order.id}`, {
+          productIds: validProductIds,
+        });
+      }
+
+      return {
+        ...order,
+        productIds: validProductIds,
+        totalPrice,
+      };
+    })
+  );
 
   return enrichedOrders;
 });
@@ -53,16 +73,6 @@ export const addOrder = createAsyncThunk("orders/addOrder", async (order) => {
   return res.data;
 });
 
-export const updateOrder = createAsyncThunk(
-  "orders/updateOrder",
-  async (order) => {
-    const totalPrice = await calculateTotalPrice(order.productIds);
-    const fullOrder = { ...order, totalPrice };
-    const res = await axios.put(`${ORDERS_URL}/${order.id}`, fullOrder);
-    return res.data;
-  }
-);
-
 const ordersSlice = createSlice({
   name: "orders",
   initialState: {
@@ -73,6 +83,9 @@ const ordersSlice = createSlice({
   reducers: {
     selectOrder: (state, action) => {
       state.selectedOrder = action.payload;
+    },
+    clearSelectedOrder: (state) => {
+      state.selectedOrder = null;
     },
   },
   extraReducers: (builder) => {
@@ -95,18 +108,9 @@ const ordersSlice = createSlice({
       })
       .addCase(addOrder.fulfilled, (state, action) => {
         state.list.push(action.payload);
-      })
-      .addCase(updateOrder.fulfilled, (state, action) => {
-        const index = state.list.findIndex((o) => o.id === action.payload.id);
-        if (index !== -1) {
-          state.list[index] = action.payload;
-          if (state.selectedOrder?.id === action.payload.id) {
-            state.selectedOrder = action.payload;
-          }
-        }
       });
   },
 });
 
-export const { selectOrder } = ordersSlice.actions;
+export const { selectOrder, clearSelectedOrder } = ordersSlice.actions;
 export default ordersSlice.reducer;

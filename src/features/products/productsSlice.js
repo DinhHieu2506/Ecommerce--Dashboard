@@ -3,7 +3,6 @@ import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const PRODUCTS_URL = `${BASE_URL}/products`;
-const ORDERS_URL = `${BASE_URL}/orders`;
 
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
@@ -20,13 +19,10 @@ export const addProduct = createAsyncThunk(
       const res = await axios.post(PRODUCTS_URL, product);
       return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || error.message || "Add failed"
-      );
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
-
 
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
@@ -35,10 +31,11 @@ export const updateProduct = createAsyncThunk(
       const res = await axios.put(`${PRODUCTS_URL}/${product.id}`, product);
       return res.data;
     } catch (error) {
-      if (error.response?.status === 404) {
-        return rejectWithValue("Product not found");
-      }
-      return rejectWithValue(error.message || "Something went wrong");
+      return rejectWithValue(
+        error.response?.status === 404
+          ? "Product not found"
+          : error.response?.data?.message || error.message
+      );
     }
   }
 );
@@ -48,32 +45,14 @@ export const deleteProduct = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       await axios.delete(`${PRODUCTS_URL}/${id}`);
+      return id;
     } catch (error) {
-      if (error.response?.status === 404) {
-        return rejectWithValue("Product not found");
-      }
-      return rejectWithValue(error.message || "Delete failed");
+      return rejectWithValue(
+        error.response?.status === 404
+          ? "Product not found"
+          : error.response?.data?.message || error.message
+      );
     }
-
-    const ordersRes = await axios.get(ORDERS_URL);
-    const orders = ordersRes.data;
-    const ordersToUpdateOrDelete = orders.filter((order) =>
-      order.productIds.includes(id)
-    );
-
-    for (const order of ordersToUpdateOrDelete) {
-      const updatedProductIds = order.productIds.filter((pid) => pid !== id);
-      if (updatedProductIds.length === 0) {
-        await axios.delete(`${ORDERS_URL}/${order.id}`);
-      } else {
-        await axios.put(`${ORDERS_URL}/${order.id}`, {
-          ...order,
-          productIds: updatedProductIds,
-        });
-      }
-    }
-
-    return id;
   }
 );
 
@@ -82,7 +61,7 @@ const productsSlice = createSlice({
   initialState: {
     products: [],
     loading: false,
-    error: null,
+    error: null, // 👈 Chỉ cần thiết cho fetchProducts
   },
   reducers: {
     clearError: (state) => {
@@ -101,33 +80,22 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload || action.error.message;
       })
 
       .addCase(addProduct.fulfilled, (state, action) => {
         state.products.push(action.payload);
       })
-      .addCase(addProduct.rejected, (state, action) => {
-        state.error = action.payload || action.error.message;
-      })
 
       .addCase(updateProduct.fulfilled, (state, action) => {
-        const index = state.products.findIndex(
-          (p) => p.id === action.payload.id
-        );
+        const index = state.products.findIndex(p => p.id === action.payload.id);
         if (index !== -1) {
           state.products[index] = action.payload;
         }
       })
-      .addCase(updateProduct.rejected, (state, action) => {
-        state.error = action.payload || action.error.message;
-      })
 
       .addCase(deleteProduct.fulfilled, (state, action) => {
-        state.products = state.products.filter((p) => p.id !== action.payload);
-      })
-      .addCase(deleteProduct.rejected, (state, action) => {
-        state.error = action.payload || action.error.message;
+        state.products = state.products.filter(p => p.id !== action.payload);
       });
   },
 });

@@ -1,8 +1,8 @@
-// usersForm.js
+
 import React, { useState, useEffect } from "react";
 import { Modal, Input, Select, notification } from "antd";
 import { useDispatch } from "react-redux";
-import { updateUser } from "./usersSlice";
+import { updateUser,fetchUsers } from "./usersSlice";
 
 const { Option } = Select;
 
@@ -14,37 +14,56 @@ export default function UserForm({ visible, onClose, user }) {
     setFormData(user);
   }, [user]);
 
+
+    useEffect(() => {
+      dispatch(fetchUsers());
+    }, [dispatch]);
+
   const handleChange = (key, value) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = () => {
-    if (!formData.name.trim()) {
-      notification.error({ message: "Name is required" });
-      return;
-    }
+  const handleSubmit = async () => {
+  if (!formData.name.trim()) {
+    notification.error({ message: "Name is required" });
+    return;
+  }
 
-    if (!formData.email.trim()) {
-      notification.error({ message: "Email is required" });
-      return;
-    }
+  if (!formData.email.trim()) {
+    notification.error({ message: "Email is required" });
+    return;
+  }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email.trim())) {
-      notification.error({ message: "Invalid email format" });
-      return;
-    }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email.trim())) {
+    notification.error({ message: "Invalid email format" });
+    return;
+  }
 
-    const trimmedData = {
-      ...formData,
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-    };
+  const trimmedData = {
+    ...formData,
+    name: formData.name.trim(),
+    email: formData.email.trim(),
+  };
 
-    dispatch(updateUser(trimmedData));
+  try {
+    await dispatch(updateUser(trimmedData)).unwrap();
     notification.success({ message: "User updated successfully" });
     onClose();
-  };
+  } catch (error) {
+    notification.error({
+      message: "Update failed",
+      description: error,
+    });
+
+    dispatch(fetchUsers());
+
+    
+    onClose();
+    setFormData(null);
+  }
+};
+
 
   if (!formData) return null;
 

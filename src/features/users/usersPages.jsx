@@ -39,8 +39,9 @@ export default function UsersPage() {
         } catch (error) {
           notification.error({
             message: "Delete failed",
-            description: "There was an error while deleting the user.",
+            description: "User not found.",
           });
+          dispatch(fetchUsers());
         }
       },
     });

@@ -2,55 +2,224 @@
   "products": [
     {
       "id": "342d",
-      "name": "Dark Nhân Tâm",
+      "name": "Sách Tư Duy Logic",
       "category": "Books",
-      "price": 50,
-      "description": "Hay quá",
-      "stock": 10
+      "price": 62,
+      "description": "Kỹ năng giải quyết vấn đề hiệu quả",
+      "stock": 15
     },
     {
       "id": "af53",
-      "name": "Quả bóng",
+      "name": "Bóng đá tiêu chuẩn FIFA",
       "category": "Sports",
-      "price": 20,
-      "description": "Haha",
-      "stock": 12
+      "price": 38,
+      "description": "Thi đấu sân cỏ nhân tạo",
+      "stock": 25
     },
     {
       "id": "a072",
-      "name": "aaaaaa",
+      "name": "Áo thun local brand",
       "category": "Clothing",
-      "price": 1,
-      "description": "",
-      "stock": 2
-    }
-  ],
-  "users": [
-    {
-      "id": "2",
-      "name": "Nguyễn Van A",
-      "email": "vanaaa@example.com",
-      "role": "customer",
-      "createdAt": "2025-07-22T03:11:49.536Z"
+      "price": 22,
+      "description": "Chất vải co giãn, thấm hút mồ hôi",
+      "stock": 40
     },
     {
-      "id": "3",
-      "name": "Trần Đình Hiếu",
-      "email": "hieumap2506@gmail.com",
-      "role": "admin",
-      "createdAt": "2025-07-21T03:07:10.648Z"
+      "id": "b109",
+      "name": "MacBook Air M3",
+      "category": "Electronics",
+      "price": 1399,
+      "description": "Chip M3, thời lượng pin 18h",
+      "stock": 6
+    },
+    {
+      "id": "c220",
+      "name": "Quần jean nam",
+      "category": "Clothing",
+      "price": 49,
+      "description": "Form slimfit, co giãn 2 chiều",
+      "stock": 35
+    },
+    {
+      "id": "d301",
+      "name": "Vợt cầu lông Yonex",
+      "category": "Sports",
+      "price": 75,
+      "description": "Độ bền cao, nhẹ tay",
+      "stock": 10
+    },
+    {
+      "id": "e412",
+      "name": "Đèn ngủ để bàn",
+      "category": "Home",
+      "price": 25,
+      "description": "Ánh sáng dịu nhẹ, tiết kiệm điện",
+      "stock": 18
+    },
+    {
+      "id": "f509",
+      "name": "Bàn học sinh thông minh",
+      "category": "Home",
+      "price": 130,
+      "description": "Chống cận thị, điều chỉnh độ cao",
+      "stock": 12
+    },
+    {
+      "id": "g620",
+      "name": "Loa Bluetooth JBL GO 4",
+      "category": "Electronics",
+      "price": 55,
+      "description": "Âm thanh nổi, chống nước IP67",
+      "stock": 14
+    },
+    {
+      "id": "h731",
+      "name": "Sách 'Dám Nghĩ Lớn'",
+      "category": "Books",
+      "price": 29,
+      "description": "Khơi nguồn sáng tạo và đột phá",
+      "stock": 22
+    },
+    {
+      "id": "i803",
+      "name": "Tai nghe Sony WH-CH520",
+      "category": "Electronics",
+      "price": 99,
+      "description": "Kết nối Bluetooth 5.2, pin 50h",
+      "stock": 17
+    },
+    {
+      "id": "j904",
+      "name": "Gối cao su non",
+      "category": "Home",
+      "price": 45,
+      "description": "Chống mỏi cổ, kháng khuẩn",
+      "stock": 27
+    },
+    {
+      "id": "k015",
+      "name": "Bình giữ nhiệt Lock&Lock",
+      "category": "Home",
+      "price": 33,
+      "description": "Giữ nóng/lạnh 12h",
+      "stock": 30
+    },
+    {
+      "id": "l126",
+      "name": "Túi chéo thể thao",
+      "category": "Sports",
+      "price": 20,
+      "description": "Thiết kế năng động, nhiều ngăn",
+      "stock": 20
+    },
+    {
+      "id": "m237",
+      "name": "Sách 'Thiết Kế Cuộc Đời Thịnh Vượng'",
+      "category": "Books",
+      "price": 39,
+      "description": "Tư duy thành công và bền vững",
+      "stock": 10
     }
   ],
+"users": [
+  { "id": 1, "name": "Nguyễn Hoàng", "email": "hoang.nguyen@example.com", "createdAt": "2025-07-01T08:30:00.000Z", "role": "admin" },
+  { "id": 2, "name": "Trần Minh", "email": "minh.tran@example.com", "createdAt": "2025-07-02T09:15:00.000Z", "role": "customer" },
+  { "id": 3, "name": "Lê Khánh", "email": "khanh.le@example.com", "createdAt": "2025-07-03T10:45:00.000Z", "role": "customer" },
+  { "id": 4, "name": "Phạm Tuấn", "email": "tuan.pham@example.com", "createdAt": "2025-07-04T14:20:00.000Z", "role": "customer" },
+  { "id": 5, "name": "Vũ Hà", "email": "ha.vu@example.com", "createdAt": "2025-07-05T11:10:00.000Z", "role": "customer" },
+  { "id": 6, "name": "Đỗ Quang", "email": "quang.do@example.com", "createdAt": "2025-07-06T13:40:00.000Z", "role": "customer" },
+  { "id": 7, "name": "Bùi Lan", "email": "lan.bui@example.com", "createdAt": "2025-07-07T15:05:00.000Z", "role": "customer" },
+  { "id": 8, "name": "Hoàng Nam", "email": "nam.hoang@example.com", "createdAt": "2025-07-08T08:55:00.000Z", "role": "customer" },
+  { "id": 9, "name": "Ngô Hương", "email": "huong.ngo@example.com", "createdAt": "2025-07-09T16:25:00.000Z", "role": "customer" },
+  { "id": 10, "name": "Lý Bảo", "email": "bao.ly@example.com", "createdAt": "2025-07-10T09:50:00.000Z", "role": "customer" },
+  { "id": 11, "name": "Đinh Phúc", "email": "phuc.dinh@example.com", "createdAt": "2025-07-11T10:10:00.000Z", "role": "customer" },
+  { "id": 12, "name": "Châu Nhi", "email": "nhi.chau@example.com", "createdAt": "2025-07-12T14:00:00.000Z", "role": "customer" },
+  { "id": 13, "name": "Mai Vinh", "email": "vinh.mai@example.com", "createdAt": "2025-07-13T15:35:00.000Z", "role": "customer" },
+  { "id": 14, "name": "Huỳnh An", "email": "an.huynh@example.com", "createdAt": "2025-07-14T12:25:00.000Z", "role": "admin" },
+  { "id": 15, "name": "Tống Ngọc", "email": "ngoc.tong@example.com", "createdAt": "2025-07-15T13:55:00.000Z", "role": "customer" }
+]
+
+,
   "orders": [
     {
-      "id": "2",
-      "userId": "3",
-      "productIds": [
-        "342d"
-      ],
+      "id": 1,
+      "userId": 1,
+      "productIds": ["342d", "af53"],
+      "status": "pending",
+      "totalPrice": 100,
+      "createdAt": "2024-06-01T10:20:00Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "productIds": ["b109"],
       "status": "shipped",
-      "totalPrice": 0,
-      "createdAt": "2025-07-18T09:30:00.000Z"
+      "totalPrice": 1399,
+      "createdAt": "2024-06-02T12:00:00Z"
+    },
+    {
+      "id": 3,
+      "userId": 3,
+      "productIds": ["a072", "c220", "e412"],
+      "status": "delivered",
+      "totalPrice": 96,
+      "createdAt": "2024-06-05T15:30:00Z"
+    },
+    {
+      "id": 4,
+      "userId": 4,
+      "productIds": ["g620"],
+      "status": "cancelled",
+      "totalPrice": 55,
+      "createdAt": "2024-06-10T09:10:00Z"
+    },
+    {
+      "id": 5,
+      "userId": 5,
+      "productIds": ["d301", "af53"],
+      "status": "pending",
+      "totalPrice": 113,
+      "createdAt": "2024-06-12T17:45:00Z"
+    },
+    {
+      "id": 6,
+      "userId": 6,
+      "productIds": ["m237", "h731"],
+      "status": "delivered",
+      "totalPrice": 68,
+      "createdAt": "2024-06-15T11:20:00Z"
+    },
+    {
+      "id": 7,
+      "userId": 7,
+      "productIds": ["j904", "k015"],
+      "status": "shipped",
+      "totalPrice": 78,
+      "createdAt": "2024-06-20T08:40:00Z"
+    },
+    {
+      "id": 8,
+      "userId": 8,
+      "productIds": ["f509"],
+      "status": "delivered",
+      "totalPrice": 130,
+      "createdAt": "2024-06-25T13:15:00Z"
+    },
+    {
+      "id": 9,
+      "userId": 9,
+      "productIds": ["l126", "e412", "af53"],
+      "status": "pending",
+      "totalPrice": 83,
+      "createdAt": "2024-06-28T10:00:00Z"
+    },
+    {
+      "id": 10,
+      "userId": 10,
+      "productIds": ["i803", "k015"],
+      "status": "cancelled",
+      "totalPrice": 132,
+      "createdAt": "2024-07-01T14:55:00Z"
     }
   ]
 }

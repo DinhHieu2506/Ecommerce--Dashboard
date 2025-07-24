@@ -27,67 +27,56 @@ export default function ProductsPage() {
       dispatch(clearError());
     }
   }, [error, dispatch]);
-  const handleSave = async (data) => {
-    try {
-      if (editingProduct) {
-        await dispatch(
-          updateProduct({ ...data, id: editingProduct.id })
-        ).unwrap();
-        notification.success({ message: "Product updated successfully" });
-        setOpen(false);
-        setEditingProduct(null);
-      } else {
-        await dispatch(addProduct(data)).unwrap();
-        notification.success({ message: "Product added successfully" });
-        setOpen(false);
-      }
-    } catch (error) {
-      notification.error({
-        message: "Failed to save product",
-        description:
-          error === "Product not found"
-            ? "This product no longer exists. It may have been deleted by another user."
-            : error === "Product already exists"
-            ? "A product with this name already exists. Please choose a different name."
-            : error?.message || "Something went wrong.",
-      });
 
-      if (editingProduct && error === "Product not found") {
-        setOpen(false);
-        setEditingProduct(null);
+  const handleSave = async (data) => {
+  try {
+    if (editingProduct) {
+      await dispatch(updateProduct({ ...data, id: editingProduct.id })).unwrap();
+      notification.success({ message: "Product updated successfully" });
+      setOpen(false);
+      setEditingProduct(null);
+    } else {
+      await dispatch(addProduct(data)).unwrap();
+      notification.success({ message: "Product added successfully" });
+      setOpen(false);
+    }
+  } catch {
+    notification.error({
+      message: "Product not found",
+    });
+
+    // Reload in case product not found
+    if (editingProduct) {
+      setOpen(false);
+      setEditingProduct(null);
+      dispatch(fetchProducts());
+    }
+  }
+};
+
+const handleDelete = (id) => {
+  Modal.confirm({
+    title: "Confirm delete",
+    content: "Are you sure you want to delete this product?",
+    okText: "Yes",
+    cancelText: "No",
+    onOk: async () => {
+      try {
+        await dispatch(deleteProduct(id)).unwrap();
+        notification.success({
+          message: "Product deleted successfully",
+        });
+      } catch {
+        notification.error({
+          message: "Product not found",
+        });
+
         dispatch(fetchProducts());
       }
-    }
-  };
+    },
+  });
+};
 
-  const handleDelete = (id) => {
-    Modal.confirm({
-      title: "Confirm delete",
-      content: "Are you sure you want to delete this product?",
-      okText: "Yes",
-      cancelText: "No",
-      onOk: async () => {
-        try {
-          await dispatch(deleteProduct(id)).unwrap();
-          notification.success({
-            message: "Deleted",
-            description: "Product deleted successfully.",
-          });
-        } catch (error) {
-          notification.error({
-            message: "Delete failed",
-            description:
-              error === "Product not found"
-                ? "This product no longer exists. It may have already been deleted."
-                : error?.message || "Something went wrong.",
-          });
-          if (error === "Product not found") {
-            dispatch(fetchProducts());
-          }
-        }
-      },
-    });
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-4">
@@ -160,7 +149,7 @@ export default function ProductsPage() {
                     key={product.id}
                     className="border-b border-gray-100 hover:bg-gray-50"
                   >
-                    <td className="py-4 px-6 text-sm text-gray-900">
+                    <td className="py-4 px-6 text-sm text-gray-900 max-w-[160px] truncate">
                       {product.name}
                     </td>
                     <td className="py-4 px-6 text-sm text-gray-600">
@@ -169,7 +158,7 @@ export default function ProductsPage() {
                     <td className="py-4 px-6 text-sm text-gray-900">
                       ${product.price}
                     </td>
-                    <td className="py-4 px-6 text-sm text-gray-600">
+                    <td className="py-4 px-6 text-sm text-gray-600 max-w-[220px] truncate">
                       {product.description}
                     </td>
                     <td className="py-4 px-6 text-sm text-gray-900">

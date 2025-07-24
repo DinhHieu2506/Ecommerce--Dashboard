@@ -5,25 +5,20 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 export default function ProductForm({ visible, onClose, onSave, initialData }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    price: 0,
-    description: "",
-    stock: 0,
-  });
+  const defaultFormData = {
+  name: "",
+  category: "",
+  price: 0,
+  description: "",
+  stock: 0,
+};
 
-  useEffect(() => {
-    setFormData(
-      initialData || {
-        name: "",
-        category: "",
-        price: 0,
-        description: "",
-        stock: 0,
-      }
-    );
-  }, [initialData, visible]);
+const [formData, setFormData] = useState(defaultFormData);
+
+useEffect(() => {
+  setFormData(initialData || defaultFormData);
+}, [initialData, visible]);
+
 
   const handleChange = (key, value) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -43,7 +38,7 @@ export default function ProductForm({ visible, onClose, onSave, initialData }) {
     if (formData.price <= 0) {
       return notification.error({ message: "Price must be greater than 0" });
     }
-    if (formData.stock < 0) {
+    if (formData.stock <= 0) {
       return notification.error({ message: "Stock cannot be negative" });
     }
 
