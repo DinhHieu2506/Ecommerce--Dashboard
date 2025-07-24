@@ -30,7 +30,6 @@ export default function ProductsPage() {
 
   const handleSave = (data) => {
     if (editingProduct) {
-      // ✅ Gộp id vào để gửi lên đúng format
       dispatch(updateProduct({ ...data, id: editingProduct.id }));
     } else {
       dispatch(addProduct(data));
