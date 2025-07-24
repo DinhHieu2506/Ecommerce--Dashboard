@@ -4,7 +4,7 @@ import { Eye } from "lucide-react";
 import { fetchOrders, selectOrder } from "./ordersSlice";
 import OrderForm from "./ordersForm";
 import { fetchUsers } from "../users/usersSlice";
-import OrderStatusPopover from "./ordersStatus"; 
+import OrderStatusPopover from "./ordersStatus";
 
 export default function OrdersPage() {
   const dispatch = useDispatch();

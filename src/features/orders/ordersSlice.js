@@ -5,18 +5,16 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const baseUrl = `${API_BASE_URL}/orders`;
 const productsUrl = `${API_BASE_URL}/products`;
 
-
 const calculateTotalPrice = async (productIds) => {
   const res = await axios.get(productsUrl);
   const allProducts = res.data;
   return productIds.reduce((total, id) => {
-    const product = allProducts.find(p => p.id === id);
+    const product = allProducts.find((p) => p.id === id);
     return product ? total + product.price : total;
   }, 0);
 };
 
 export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
-  
   const [ordersRes, productsRes] = await Promise.all([
     axios.get(baseUrl),
     axios.get(productsUrl),
@@ -25,9 +23,9 @@ export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
   const orders = ordersRes.data;
   const products = productsRes.data;
 
-  const enrichedOrders = orders.map(order => {
+  const enrichedOrders = orders.map((order) => {
     const totalPrice = order.productIds.reduce((sum, id) => {
-      const product = products.find(p => p.id === id);
+      const product = products.find((p) => p.id === id);
       return product ? sum + product.price : sum;
     }, 0);
     return { ...order, totalPrice };
@@ -35,7 +33,6 @@ export const fetchOrders = createAsyncThunk("orders/fetchOrders", async () => {
 
   return enrichedOrders;
 });
-
 
 export const updateOrderStatus = createAsyncThunk(
   "orders/updateOrderStatus",
@@ -47,17 +44,24 @@ export const updateOrderStatus = createAsyncThunk(
 
 export const addOrder = createAsyncThunk("orders/addOrder", async (order) => {
   const totalPrice = await calculateTotalPrice(order.productIds);
-  const fullOrder = { ...order, totalPrice, createdAt: new Date().toISOString() };
+  const fullOrder = {
+    ...order,
+    totalPrice,
+    createdAt: new Date().toISOString(),
+  };
   const res = await axios.post(baseUrl, fullOrder);
   return res.data;
 });
 
-export const updateOrder = createAsyncThunk("orders/updateOrder", async (order) => {
-  const totalPrice = await calculateTotalPrice(order.productIds);
-  const fullOrder = { ...order, totalPrice };
-  const res = await axios.put(`${baseUrl}/${order.id}`, fullOrder);
-  return res.data;
-});
+export const updateOrder = createAsyncThunk(
+  "orders/updateOrder",
+  async (order) => {
+    const totalPrice = await calculateTotalPrice(order.productIds);
+    const fullOrder = { ...order, totalPrice };
+    const res = await axios.put(`${baseUrl}/${order.id}`, fullOrder);
+    return res.data;
+  }
+);
 
 const ordersSlice = createSlice({
   name: "orders",
@@ -81,7 +85,7 @@ const ordersSlice = createSlice({
         state.list = action.payload;
       })
       .addCase(updateOrderStatus.fulfilled, (state, action) => {
-        const index = state.list.findIndex(o => o.id === action.payload.id);
+        const index = state.list.findIndex((o) => o.id === action.payload.id);
         if (index !== -1) {
           state.list[index] = action.payload;
           if (state.selectedOrder?.id === action.payload.id) {
@@ -93,7 +97,7 @@ const ordersSlice = createSlice({
         state.list.push(action.payload);
       })
       .addCase(updateOrder.fulfilled, (state, action) => {
-        const index = state.list.findIndex(o => o.id === action.payload.id);
+        const index = state.list.findIndex((o) => o.id === action.payload.id);
         if (index !== -1) {
           state.list[index] = action.payload;
           if (state.selectedOrder?.id === action.payload.id) {
