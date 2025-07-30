@@ -10,6 +10,14 @@ import {
 import { useDispatch } from "react-redux";
 import { updateOrderStatus } from "./ordersSlice";
 
+const statusOrder = [
+  "pending",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+];
+
 const statusOptions = {
   pending: {
     label: "Pending",
@@ -43,10 +51,14 @@ export default function OrderStatusPopover({ order }) {
   const dispatch = useDispatch();
 
   const isLocked = ["delivered", "cancelled"].includes(order.status);
+  const currentIndex = statusOrder.indexOf(order.status);
   const current = statusOptions[order.status];
 
   const handleChange = (status) => {
-    if (isLocked || status === order.status) {
+    const nextStatus = statusOrder[currentIndex + 1];
+    const canCancel = status === "cancelled" && !isLocked;
+
+    if (isLocked || (status !== nextStatus && !canCancel)) {
       setOpen(false);
       return;
     }
@@ -59,14 +71,21 @@ export default function OrderStatusPopover({ order }) {
     <div className="w-48">
       {Object.entries(statusOptions).map(([key, { label, icon }]) => {
         const isCurrent = key === order.status;
+        const nextStatus = statusOrder[currentIndex + 1];
+        const isAllowed =
+          key === nextStatus || (key === "cancelled" && !isLocked);
+        const isDisabled = isLocked || (!isAllowed && !isCurrent);
+
         return (
           <div
             key={key}
-            onClick={!isLocked ? () => handleChange(key) : undefined}
+            onClick={!isDisabled ? () => handleChange(key) : undefined}
             className={`flex items-center gap-2 px-3 py-2 rounded 
               ${isCurrent ? "bg-gray-100" : "hover:bg-gray-100"} 
               ${
-                isLocked ? "cursor-not-allowed text-gray-400" : "cursor-pointer"
+                isDisabled
+                  ? "cursor-not-allowed text-gray-400"
+                  : "cursor-pointer"
               }`}
           >
             {icon}
